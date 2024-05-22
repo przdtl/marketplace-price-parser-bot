@@ -1,4 +1,7 @@
+import sys
 import asyncio
+import logging
+
 from src.settings.loader import dispatcher, bot
 from src.routers.commands import router as commands_router
 
@@ -9,4 +12,5 @@ async def main() -> None:
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
