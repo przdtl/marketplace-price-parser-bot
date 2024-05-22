@@ -5,6 +5,9 @@ from pydantic_settings import (BaseSettings, SettingsConfigDict)
 class Settings(BaseSettings):
 
     BOT_TOKEN: str
-    PATH_TO_EXCEL_FOLDER: str = Path(__file__).resolve().parent + 'media/excel'
+    PATH_TO_EXCEL_FOLDER: str = str(
+        Path(__file__).resolve().parent.parent.parent) + "\\media\\excel\\"
+
+    ALLOWED_EXCEL_EXTENTIONS: list[str] = ['.xls', '.xlsx']
 
     model_config = SettingsConfigDict(env_file='.env')
