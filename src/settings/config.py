@@ -10,4 +10,6 @@ class Settings(BaseSettings):
 
     ALLOWED_EXCEL_EXTENTIONS: list[str] = ['.xls', '.xlsx']
 
+    OZON_PRODUCT_URL: str = 'https://www.ozon.ru/product/'
+
     model_config = SettingsConfigDict(env_file='.env')
