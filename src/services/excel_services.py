@@ -74,7 +74,7 @@ async def send_document_by_chat_id(message: Message, caption: str = '') -> None:
 
 async def get_product_prices_by_articuls(*articuls) -> list[float]:
     '''Отправляет запрос на сервис парсинга с данными о артикулах и возвращает список цен на эти товары'''
-    url = 'http://127.0.0.1:8000/price/'
+    url = Settings().OZON_PRICE_PARSER_SERVICE_URL
     request_body = {
         'articuls': articuls
     }
