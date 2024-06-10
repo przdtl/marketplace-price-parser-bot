@@ -4,8 +4,8 @@ import aiohttp
 
 from aiogram.types import (Message, File, FSInputFile)
 
-from src.settings.config import Settings
-from src.settings.loader import bot
+from src.config import Settings
+from src.loader import bot
 
 
 def get_excel_filename_by_chat_id(message: Message, is_absolute_path: bool = True) -> str:

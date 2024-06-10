@@ -2,7 +2,7 @@ import sys
 import asyncio
 import logging
 
-from src.settings.loader import dispatcher, bot
+from src.loader import dispatcher, bot
 from src.routers.commands import router as commands_router
 from src.routers.main_menu import router as main_menu_router
 from src.routers.products import router as products_router

@@ -3,7 +3,7 @@ import pandas as pd
 from aiogram.types import Message
 from pandas.core.series import Series
 
-from src.settings.config import Settings
+from src.config import Settings
 from src.services.excel_services import (
     get_excel_filename_by_chat_id, get_product_prices_by_articuls)
 
