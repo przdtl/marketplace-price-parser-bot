@@ -11,12 +11,10 @@ class Settings(BaseSettings):
     MONGODB_USER: str
     MONGODB_PASS: str
 
-    ALLOWED_EXCEL_EXTENTIONS: list[str] = ['.xls', '.xlsx']
-
     # URL of site's products
     OZON_PRODUCT_URL: str = 'https://www.ozon.ru/product'
 
-    # Prise parser variables 
+    # Prise parser variables
     PRICE_PARSER_SERVICE_URL: str = 'http://127.0.0.1:8000'
     OZON_PRICE_PARSER_SERVICE_URL: str = PRICE_PARSER_SERVICE_URL + '/ozon'
     WILDBERRIES_PRICE_PARSER_SERVICE_URL: str = PRICE_PARSER_SERVICE_URL + '/wildberries'
