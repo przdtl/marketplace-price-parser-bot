@@ -20,6 +20,7 @@ from src.enums import (GetProductsStateEnums, CommonButtonsNames)
 from src.services.tg_document import get_document_from_message
 from src.services.pandas_service import read_first_column_dataframe_from_excel
 from src.config import Settings
+# from src.services.mongo import create_user
 
 router = Router()
 
@@ -37,10 +38,8 @@ async def load_new_excel_file_with_articuls_message_handler(message: Message) ->
     #     await message.answer('Документ не может быть сохранён!')
     # else:
     #     await message.answer('Документ был успешно сохранён!')
-    
-    file = await get_document_from_message(message)
-    df = read_first_column_dataframe_from_excel('https://api.telegram.org/file/bot{}/{}'.format(Settings().BOT_TOKEN, file.file_path))
-    print(df)
+
+    pass
 
 
 # @router.message(

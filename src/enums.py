@@ -22,3 +22,8 @@ class GetProductsStateEnums(str, Enum):
 
 class LoadProductsStateEnums(str, Enum):
     pass
+
+
+class MarketplaceNameEnum(str, Enum):
+    OZON = 'OZON'
+    WILDBERRIES = 'WILDBERRIES'
