@@ -27,3 +27,8 @@ class LoadProductsStateEnums(str, Enum):
 class MarketplaceNameEnum(str, Enum):
     OZON = 'OZON'
     WILDBERRIES = 'WILDBERRIES'
+
+
+class ExtendOrReplaceArticulsEnum(str, Enum):
+    EXTEND = 'Расширить'
+    REPLACE = 'Заменить'
