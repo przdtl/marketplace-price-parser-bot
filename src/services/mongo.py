@@ -1,7 +1,6 @@
 import asyncio
 
 from src.database import db
-from src.enums import MarketplaceNameEnum
 
 collection = db.document_collection
 
@@ -34,16 +33,6 @@ async def delete_all_products_from_user_in_specific_marketplace(chat_id: int, ma
         'marketplace_name': marketplace_name,
     }
     await collection.delete_one(user_filter)
-
-# async def add_new_price_to_product(chat_id: int, marketplace_name: str, articul: int, new_price: float) -> None:
-#     '''Добавляет цену в список конкретному товару'''
-#     product_filter = {
-#         'chat_id': chat_id,
-#         'articul': articul,
-#         'marketplace_name': marketplace_name,
-#     }
-
-#     await collection.update_one(product_filter, {'$push': {'prices': new_price}})
 
 
 async def get_all_users_articuls_of_specific_marketplace(chat_id: int, marketplace_name: str) -> list[int]:

@@ -11,13 +11,8 @@ class Settings(BaseSettings):
     MONGODB_USER: str
     MONGODB_PASS: str
 
-    # URL of site's products
-    OZON_PRODUCT_URL: str = 'https://www.ozon.ru/product'
-
-    # Prise parser variables
-    PRICE_PARSER_SERVICE_URL: str = 'http://127.0.0.1:8000'
-    OZON_PRICE_PARSER_SERVICE_URL: str = PRICE_PARSER_SERVICE_URL + '/ozon'
-    WILDBERRIES_PRICE_PARSER_SERVICE_URL: str = PRICE_PARSER_SERVICE_URL + '/wildberries'
+    MARKETPLACE_PRICE_PARSER_SCHEDULER_HOST: str
+    MARKETPLACE_PRICE_PARSER_SCHEDULER_PORT: int
 
     @property
     def mongodb_dsn(self) -> str:

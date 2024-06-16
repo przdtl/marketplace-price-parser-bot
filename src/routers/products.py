@@ -3,7 +3,6 @@ from aiogram.types import Message
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
-
 from src.states import (AddNewArticulsStatesGroup, GetProductsInfoStatesGroup)
 from src.services.tg_document import (
     get_list_of_articuls_from_message_document,
