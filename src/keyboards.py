@@ -4,10 +4,10 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from src.enums import (
     NonStateEnums,
     SettingsStateEnum,
-    GetProductsStateEnums,
     CommonButtonsNames,
     MarketplaceNameEnum,
-    ExtendOrReplaceArticulsEnum
+    ExtendOrReplaceArticulsEnum,
+    ProductsInfoExportWayEnum
 )
 
 
@@ -41,20 +41,22 @@ def settings_keyboard() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
 
-def get_products_keyboard() -> ReplyKeyboardMarkup:
-    download_excel_document = KeyboardButton(
-        text=GetProductsStateEnums.GET_PRODUCTS_IN_EXCEL)
-    get_prodict_links = KeyboardButton(
-        text=GetProductsStateEnums.GET_PRODUCTS_IN_TEXT)
+def export_products_ways_keyboard() -> ReplyKeyboardMarkup:
     back = get_back_keyboard_button()
 
-    keyboard = [
-        [download_excel_document],
-        [get_prodict_links],
-        [back],
-    ]
+    builder = ReplyKeyboardBuilder()
+    export_way_buttons = []
+    for export_way in ProductsInfoExportWayEnum:
+        export_way_buttons.append(
+            KeyboardButton(text=export_way.value))
 
-    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+    builder.row(*export_way_buttons, width=3)
+    builder.add(back)
+
+    markup = builder.as_markup()
+    markup.resize_keyboard = True
+
+    return markup
 
 
 def load_products_keyboard() -> ReplyKeyboardMarkup:

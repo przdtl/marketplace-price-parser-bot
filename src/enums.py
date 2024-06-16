@@ -15,13 +15,9 @@ class SettingsStateEnum(str, Enum):
     SET_SCRAPPING_TIME = 'Установить время сканирования'
 
 
-class GetProductsStateEnums(str, Enum):
-    GET_PRODUCTS_IN_TEXT = 'Получить инормацию сообщением'
-    GET_PRODUCTS_IN_EXCEL = 'Получить информациею в Excel'
-
-
-class LoadProductsStateEnums(str, Enum):
-    pass
+class ProductsInfoExportWayEnum(str, Enum):
+    EXCEL = 'EXCEL'
+    CSV = 'CSV'
 
 
 class MarketplaceNameEnum(str, Enum):
