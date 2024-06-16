@@ -3,10 +3,16 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
 from src.enums import NonStateEnums
-from src.states import (ProductsStatesGroup,
-                        SettingsStatesGroup, AddNewArticulsStatesGroup)
-from src.keyboards import (get_products_keyboard,
-                           load_products_keyboard, settings_keyboard)
+from src.states import (
+    SettingsStatesGroup,
+    AddNewArticulsStatesGroup,
+    GetProductsInfoStatesGroup
+)
+from src.keyboards import (
+    load_products_keyboard,
+    settings_keyboard,
+    export_products_ways_keyboard
+)
 
 router = Router()
 
@@ -23,8 +29,8 @@ async def load_products_message_handler(message: Message, state: FSMContext) -> 
     F.text == NonStateEnums.GET_PRODUCTS,
 )
 async def get_products_message_handler(message: Message, state: FSMContext) -> None:
-    await message.answer('Вы перешли в меню получения информации о товарах', reply_markup=get_products_keyboard())
-    await state.set_state(ProductsStatesGroup.get_products_list)
+    await message.answer('Вы перешли в меню получения информации о товарах', reply_markup=export_products_ways_keyboard())
+    await state.set_state(GetProductsInfoStatesGroup.choose_export_type)
 
 
 @router.message(

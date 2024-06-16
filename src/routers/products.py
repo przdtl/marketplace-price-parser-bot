@@ -4,24 +4,24 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
 
-from src.states import (ProductsStatesGroup, AddNewArticulsStatesGroup)
+from src.states import (AddNewArticulsStatesGroup, GetProductsInfoStatesGroup)
 from src.services.tg_document import (
     get_list_of_articuls_from_message_document,
-    write_articuls_in_db
+    write_articuls_in_db,
+    send_products_info
 )
 from src.keyboards import (
     main_manu_keyboard,
-    load_products_keyboard,
     marketplaces_names_keyboard,
     extend_or_replace_articuls_keyboard
 )
 from src.enums import (
     ExtendOrReplaceArticulsEnum,
+    ProductsInfoExportWayEnum,
     MarketplaceNameEnum,
     CommonButtonsNames
 )
 
-from src.config import Settings
 
 router = Router()
 
@@ -46,7 +46,7 @@ async def load_document_message_handler(message: Message, state: FSMContext) -> 
     F.text.in_(
         [marketplace_name.value for marketplace_name in MarketplaceNameEnum])
 )
-async def choose_marketplace_message_handler(message: Message, state: FSMContext) -> None:
+async def choose_marketplace_by_adding_articuls_message_handler(message: Message, state: FSMContext) -> None:
     marketplace_name = message.text
     await message.answer('Необходимо уточнить, вы хотите расширить или полностью заменить информацию о ранее существующих артикулах (если они есть)?', reply_markup=extend_or_replace_articuls_keyboard())
     await state.set_state(AddNewArticulsStatesGroup.extend_or_replace)
@@ -67,44 +67,43 @@ async def extend_or_replace_articuls_message_handler(message: Message, state: FS
 
 
 @router.message(
-    StateFilter(AddNewArticulsStatesGroup),
+    StateFilter(AddNewArticulsStatesGroup, GetProductsInfoStatesGroup),
     F.text == CommonButtonsNames.BACK,
 )
 async def return_back_from_add_new_articuls_message_handler(message: Message, state: FSMContext) -> None:
     await message.answer(text='Вы вернулись на главное меню', reply_markup=main_manu_keyboard())
     await state.clear()
 
-# @router.message(
-#     ProductsStatesGroup.get_products_list,
-#     F.text == GetProductsStateEnums.GET_PRODUCTS_IN_TEXT,
-# )
-# async def get_link_to_products_in_text_message_handler(message: Message) -> None:
-#     links = get_list_of_links_to_products(message)
-#     for link in links:
-#         await message.answer(link)
-
-# @router.message(
-#     ProductsStatesGroup.get_products_list,
-#     F.text == GetProductsStateEnums.GET_PRODUCTS_IN_EXCEL,
-# )
-# async def get_excel_file_with_actual_product_prices_message_handler(message: Message) -> None:
-#     await send_document_by_chat_id(message)
-
-# @router.message(
-#     ProductsStatesGroup.add_new_articuls,
-#     F.text,
-# )
-# async def parse_articuls_from_text_message_handler(message: Message) -> None:
-#     if not check_if_excel_by_chat_id_exists(message):
-#         await message.answer('Ошибка! Файла с артикулами не существует!', reply_markup=load_products_keyboard())
-#         return
-#     add_new_articuls_in_excel_from_message(message)
-#     await message.answer('Артикулы были успешно добавлены!', reply_markup=load_products_keyboard())
-
 
 @router.message(
-    ProductsStatesGroup.add_new_articuls,
+    GetProductsInfoStatesGroup.choose_export_type,
+    F.text.in_(
+        [export_way.value for export_way in ProductsInfoExportWayEnum])
 )
-async def all_other_messages_handler(message: Message) -> None:
-    await message.answer('Сообщение не может быть обработано!\n'
-                         'Отправьте Excel файл с артикулами товаров или перечисленные через запятую артикулы товаров сообщением!', reply_markup=load_products_keyboard())
+async def choose_export_way_message_handler(message: Message, state: FSMContext) -> None:
+    export_way = message.text
+    await state.update_data({'export_way': export_way})
+    await message.answer('Выберете маркетплейс, информацию о котором вы хотите получить', reply_markup=marketplaces_names_keyboard())
+    await state.set_state(GetProductsInfoStatesGroup.choose_marketplace)
+
+
+@ router.message(
+    GetProductsInfoStatesGroup.choose_marketplace,
+    F.text.in_(
+        [marketplace_name.value for marketplace_name in MarketplaceNameEnum])
+)
+async def choose_marketplace_by_returning_products_info_message_handler(message: Message, state: FSMContext) -> None:
+    marketplace_name = message.text
+    state_data = await state.get_data()
+    export_way = state_data.get('export_way')
+    try:
+        await send_products_info(message, marketplace_name, export_way)
+    except ValueError:
+        text = 'Ошибка! Вы не сохраняли информацию о товарах маркетплейста "{}"'.format(
+            marketplace_name
+        )
+    else:
+        text = 'Ваш документ!'
+    finally:
+        await message.answer(text, reply_markup=main_manu_keyboard())
+        await state.clear()
