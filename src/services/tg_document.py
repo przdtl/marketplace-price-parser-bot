@@ -1,4 +1,6 @@
 import hashlib
+import aiohttp
+import logging
 
 from typing import Any
 
@@ -23,6 +25,8 @@ from src.services.mongo import (
     add_list_of_products_in_document,
     delete_all_products_from_user_in_specific_marketplace
 )
+
+logger = logging.getLogger(__name__)
 
 
 async def get_document_from_message(message: Message) -> File:
@@ -85,6 +89,9 @@ async def send_excel_with_products_info(message: Message, marketplace_name: str)
     excel_bytes = get_excel_bytestr_from_dataframe(df)
 
     if df.empty:
+        logger.info(
+            'User {} requested an EMPTY excel document'.format(message.chat.id)
+        )
         raise ValueError('The document cannot be empty!')
 
     document_filename = hashlib.md5(excel_bytes).hexdigest()[:7] + '.xlsx'
@@ -92,6 +99,9 @@ async def send_excel_with_products_info(message: Message, marketplace_name: str)
     await bot.send_document(
         chat_id=message.chat.id,
         document=excel_buffered_file,
+    )
+    logger.info(
+        'User {} received an excel document'.format(message.chat.id)
     )
 
 
@@ -107,6 +117,9 @@ async def send_csv_with_products_info(message: Message, marketplace_name: str) -
     csv_bytes = get_csv_bytestr_from_dataframe(df)
 
     if df.empty:
+        logger.info(
+            'User {} requested an EMPTY excel document'.format(message.chat.id)
+        )
         raise ValueError('The document cannot be empty!')
 
     document_filename = hashlib.md5(csv_bytes).hexdigest()[:7] + '.csv'
@@ -114,6 +127,9 @@ async def send_csv_with_products_info(message: Message, marketplace_name: str) -
     await bot.send_document(
         chat_id=message.chat.id,
         document=csv_buffered_file,
+    )
+    logger.info(
+        'User {} received a csv document'.format(message.chat.id)
     )
 
 
@@ -125,8 +141,7 @@ async def get_list_of_articuls_from_message_document(message: Message) -> list[i
         pass
     try:
         return await read_first_column_from_sended_csv_document(message)
-    except ValueError as e:
-        print(e)
+    except ValueError:
         raise ValueError('The document has an invalid extension')
 
 
@@ -140,11 +155,19 @@ async def write_articuls_in_db(message: Message, answer_option: str, state_data:
             chat_id=message.chat.id,
             marketplace_name=marketplace_name,
         )
+        logger.info(
+            'The user {} REPLACE the {} articuls list: {}'.format(
+                message.chat.id, marketplace_name, articuls_list)
+        )
 
     await add_list_of_products_in_document(
         chat_id=message.chat.id,
         marketplace_name=marketplace_name,
         articuls=articuls_list
+    )
+    logger.info(
+        'The user {} EXTEND the {} articuls list: {}'.format(
+            message.chat.id, marketplace_name, articuls_list)
     )
 
 
@@ -155,3 +178,32 @@ async def send_products_info(message: Message, marketplace_name: str, export_way
             await send_excel_with_products_info(message, marketplace_name)
         case ProductsInfoExportWayEnum.CSV.value:
             await send_csv_with_products_info(message, marketplace_name)
+
+
+async def set_time_of_products_pricrs_parsing(chat_id: int, marketpalce_name: str, hour: int, minute: int, second: int) -> int:
+    '''Устанавливает время обращения планировщика к сервису считывания цен товаров
+
+    Returns:
+        int: Код ответа сервиса планировщика
+    '''
+
+    url = '{}:{}/scrapping_time'.format(
+        Settings().MARKETPLACE_PRICE_PARSER_SCHEDULER_HOST,
+        Settings().MARKETPLACE_PRICE_PARSER_SCHEDULER_PORT
+    )
+
+    prepared_marketplace_name = marketpalce_name.lower()
+    params = {
+        'chat_id': str(chat_id),
+        'marketplace_name': prepared_marketplace_name,
+        'hour': str(hour),
+        'minute': str(minute),
+        'second': str(second),
+    }
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, params=params) as response:
+            logger.info(
+                'The scheduler returned a response: {}'.format(response)
+            )
+            return response.status
