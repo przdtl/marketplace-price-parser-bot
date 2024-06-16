@@ -11,7 +11,7 @@ class NonStateEnums(str, Enum):
     SETTINGS = 'Настройки'
 
 
-class SettingsStateEnum(str, Enum):
+class SettingsEnum(str, Enum):
     SET_SCRAPPING_TIME = 'Установить время сканирования'
 
 

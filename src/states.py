@@ -3,7 +3,11 @@ from aiogram.fsm.state import StatesGroup, State
 
 class SettingsStatesGroup(StatesGroup):
     base_settings = State()
-    set_scraping_time = State()
+
+
+class SetScrappingTime(StatesGroup):
+    choose_marketplace = State()
+    set_time = State()
 
 
 class AddNewArticulsStatesGroup(StatesGroup):

@@ -3,7 +3,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from src.enums import (
     NonStateEnums,
-    SettingsStateEnum,
+    SettingsEnum,
     CommonButtonsNames,
     MarketplaceNameEnum,
     ExtendOrReplaceArticulsEnum,
@@ -30,7 +30,7 @@ def main_manu_keyboard() -> ReplyKeyboardMarkup:
 
 def settings_keyboard() -> ReplyKeyboardMarkup:
     setting_scraping_time = KeyboardButton(
-        text=SettingsStateEnum.SET_SCRAPPING_TIME)
+        text=SettingsEnum.SET_SCRAPPING_TIME)
     back = get_back_keyboard_button()
 
     keyboard = [
@@ -60,6 +60,16 @@ def export_products_ways_keyboard() -> ReplyKeyboardMarkup:
 
 
 def load_products_keyboard() -> ReplyKeyboardMarkup:
+    back = get_back_keyboard_button()
+
+    keyboard = [
+        [back],
+    ]
+
+    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+
+
+def set_scrapping_time_keyboard() -> ReplyKeyboardMarkup:
     back = get_back_keyboard_button()
 
     keyboard = [
